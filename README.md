@@ -1,0 +1,142 @@
+﻿<div align="center">
+
+## A PAD File Parser
+
+
+</div>
+
+### Description
+
+The script parse an PAD File, and give out the information that you need from it. For all who dont know PAD, it is a standard for Softwareauthors to easily submit there Software Information to software archives.
+ 
+### More Info
+ 
+
+
+<span>             |<span>
+---                |---
+**Submitted On**   |
+**By**             |[Thorsten Sanders](https://github.com/Planet-Source-Code/PSCIndex/blob/master/ByAuthor/thorsten-sanders.md)
+**Level**          |Intermediate
+**User Rating**    |5.0 (10 globes from 2 users)
+**Compatibility**  |PHP 4\.0
+**Category**       |[Miscellaneous](https://github.com/Planet-Source-Code/PSCIndex/blob/master/ByCategory/miscellaneous__8-1.md)
+**World**          |[PHP](https://github.com/Planet-Source-Code/PSCIndex/blob/master/ByWorld/php.md)
+**Archive File**   |[](https://github.com/Planet-Source-Code/thorsten-sanders-a-pad-file-parser__8-493/archive/master.zip)
+
+
+
+
+
+### Source Code
+
+```
+<?php
+/*
+ This is a simple Demo, on how to parse an PAD File,
+ and get the Infos you need. When you use this function
+ for your own script, leave credits in it for me.
+ This Code is written by Thorsten Sanders from
+ http://www.php-coding.org
+ To test it, just start the script with,
+ http://yourdomain.com/parser.php?file=http://www.padfile.com/pad.xml
+ for example, you can read local files as well
+*/
+if ($file==""){
+ print "You must enter the URL of the PAD File!";
+ die;
+}
+if(!stristr($file,".xml")){
+  Print "That file is not an PAD File!";
+  die;
+}
+fopen($file,"r") or die("PAD File not found!");
+function kriegen($suchwort1,$suchwort2){
+global $file;
+$fp=fopen($file,"r");
+$gefunden=0;
+while (!feof($fp)) {
+ $buffer = fgets($fp, 4096);
+  if(@stristr($buffer,"<$suchwort1>")){
+  $gefunden=1;
+ }
+ if ($gefunden==1){
+  if(@stristr($buffer,"<$suchwort2>")){
+   $ausgabe = trim(strip_tags($buffer));
+   return $ausgabe;
+   break;
+ }
+}
+}
+fclose($fp);
+}
+$progname = kriegen("Program_Info","Program_Name");
+$downloadurl = kriegen("Download_URLs","Primary_Download_URL");
+$progver = kriegen("Program_Info","Program_Version");
+$dateigroesse = kriegen("File_Info","File_Size_K");
+$hpurl = kriegen("Company_Info","Company_WebSite_URL");
+$beschreibung = kriegen("German","Char_Desc_450");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("German","Char_Desc_250");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("German","Char_Desc_80");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("German","Char_Desc_40");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("German","Char_Desc_2000");
+}}}}
+if ($beschreibung == ""){
+ $beschreibung = kriegen("English","Char_Desc_450");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("English","Char_Desc_250");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("English","Char_Desc_80");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("English","Char_Desc_40");
+if ($beschreibung == ""){
+ $beschreibung = kriegen("English","Char_Desc_2000");
+}}}}}
+$progstatus = kriegen("Program_Info","Program_Type");
+$progsprache = kriegen("Program_Info","Program_Language");
+if ($progsprache == "German"){
+ $progsprache = "d";
+}elseif($progsprache == "English"){
+ $progsprache = "e";
+}elseif($progsprache == "English,German" or $progsprache == "German,English"){
+ $progsprache = "b";
+}else{$progsprache = "";}
+$progpreis = kriegen("Program_Info","Program_Cost_Other");
+if ($progpreis == ""){
+ $progpreis = kriegen("Program_Info","Program_Cost_Dollars"). " $";
+}
+$email = kriegen("Contact_Info","Author_Email");
+if ($email == ""){
+ $email = kriegen("Contact_Info","Contact_Email");
+}
+//Sollten alle variablen leer sein, wird das Script abgebrochen
+if ($progname and $downloadurl and $progver and $dateigroesse and $hpurl and $beschreibung and $progstatus and $progsprache and $progpreis and $email == ""){
+  print "Error";
+  die;
+}
+print $progname;
+print "<br>";
+print $progver;
+print "<br>";
+print $progstatus;
+print "<br>";
+print $progpreis;
+print "<br>";
+print $beschreibung;
+print "<br>";
+print $progsprache;
+print "<br>";
+print $dateigroesse;
+print "<br>";
+print $downloadurl;
+print "<br>";
+print $hpurl;
+print "<br>";
+print $email;
+?>
+```
+
